@@ -1,0 +1,52 @@
+CREATE DATABASE centro_odontologico
+USE centro_odontologico
+CREATE TABLE estadosOtros ( idEstado int primary key, descripcion varchar(50))
+create table tiposDocumentos(idTipoDoc int primary key, descripcion varchar(50))
+CREATE TABLE sexos ( idSexo int identity primary key, descripcion varchar(20))
+CREATE TABLE pacientes(idPaciente int identity primary key, nombre varchar(50),apellido varchar(50),
+idTipoDoc int  FOREIGN KEY REFERENCES tiposDocumentos(idTipoDoc),documento varchar(10),fechaNac datetime, 
+idSexo int  FOREIGN KEY REFERENCES sexos(idSexo), idEstado int 
+FOREIGN KEY REFERENCES estadosOtros(idEstado),email varchar(50))
+
+CREATE TABLE roles ( idRol int identity primary key, descripcion varchar(50))
+create table usuarios(idUsuario int identity primary key, email varchar(50), 
+passwordUser varchar(25),idRol int  FOREIGN KEY REFERENCES roles(idRol),
+nombre varchar(50),apellido varchar(50),legajo varchar(50),idEstado int 
+FOREIGN KEY REFERENCES estadosOtros(idEstado))
+
+CREATE TABLE tratamientos ( idTratamiento int identity primary key, descripcion varchar(50),costo float,idEstado int 
+FOREIGN KEY REFERENCES estadosOtros(idEstado),bonus int)
+CREATE TABLE estados ( idEstado int identity primary key, descripcion varchar(50))
+CREATE TABLE horas ( idHora int primary key, descripcion varchar(50))
+CREATE TABLE citas ( idCitas int identity primary key, fecha datetime,idTratamiento int  
+FOREIGN KEY REFERENCES tratamientos(idTratamiento),idPaciente int 
+FOREIGN KEY REFERENCES pacientes(idPaciente),idUsuario int  FOREIGN KEY REFERENCES usuarios(idUsuario),
+idEstado int  FOREIGN KEY REFERENCES estados(idEstado),costo float,idHora int  FOREIGN KEY REFERENCES horas(idHora) )
+
+CREATE TABLE dientes ( idDiente int primary key, descripcion varchar(50))
+CREATE TABLE caras ( idCara int primary key, descripcion varchar(50))
+CREATE TABLE tratamientosAplicados ( idTratAplic int primary key, descripcion varchar(50))
+create table odontogramas (idOdonto int identity primary key,idPaciente int  FOREIGN KEY REFERENCES pacientes(idPaciente))
+create table odontogramasXDientes(id int identity primary key, idOdonto int  FOREIGN KEY REFERENCES odontogramas(idOdonto),
+idDiente int  FOREIGN KEY REFERENCES dientes(idDiente),idCara int  FOREIGN KEY REFERENCES caras(idCara), idTratAplic int  FOREIGN KEY REFERENCES tratamientosAplicados( idTratAplic))
+
+CREATE TABLE observaciones ( idObservacion int identity primary key,idCitas int  
+FOREIGN KEY REFERENCES citas(idCitas),observaciones varchar(100))
+
+CREATE TABLE tipos ( idTipo int identity primary key, descripcion varchar(50))
+CREATE TABLE formas ( idForma int identity primary key, descripcion varchar(50),
+idTipo int  FOREIGN KEY REFERENCES tipos(idTipo))
+CREATE TABLE pagos ( idPago int identity primary key,
+idCitas int  FOREIGN KEY REFERENCES citas(idCitas),idForma int  FOREIGN KEY REFERENCES formas(idForma))
+
+CREATE TABLE sueldosXHoras ( idSXH int identity primary key,sueldo float)
+CREATE TABLE dias ( idDia int primary key, descripcion varchar(50))
+create table horarios (idHorario int identity primary key,idUsuario int  FOREIGN KEY REFERENCES usuarios(idUsuario),idSXH int  FOREIGN KEY REFERENCES sueldosXHoras(idSXH))
+create table horariosXDias(id int identity primary key, idDia int  FOREIGN KEY REFERENCES dias(idDia),
+hora varchar(20), idHorario int  FOREIGN KEY REFERENCES horarios( idHorario))
+
+CREATE TABLE sesiones ( idSesion int identity primary key,
+token varchar(120),fecha datetime,vigencia bit,idUsuario int  FOREIGN KEY REFERENCES usuarios(idUsuario))
+
+CREATE TABLE sesionesPacientes ( idSesionP int identity primary key,
+token varchar(120),fecha datetime,vigencia bit,idCliente int  FOREIGN KEY REFERENCES pacientes(idPaciente))
